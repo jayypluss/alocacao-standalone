@@ -14,8 +14,20 @@ export class Alocador {
 
     public alocarTodas(gruposCaixas: GrupoCaixas[], container: Container) {
         this.gruposCaixas = this.organizarPorMaiorBase(gruposCaixas);
-        this.totalDeCaixasParaAlocar = this.obterTotalDeCaixas(gruposCaixas);
+        // this.totalDeCaixasParaAlocar = this.obterTotalDeCaixas(gruposCaixas);
         let ultimaCaixaAlocada: Caixa = null;
+
+        let caixasListaFlat: Caixa[] = [];
+
+        this.gruposCaixas.forEach(grupo => {
+            caixasListaFlat.concat(grupo.caixas);
+        });
+
+        for (let index = 0; index < caixasListaFlat.length; index++) {
+            ultimaCaixaAlocada = this.container.alocar(caixasListaFlat[index]);
+            if (ultimaCaixaAlocada) console.log('ultimaCaixaAlocada: ', ultimaCaixaAlocada.posicao);
+        }
+
 
         // for (let index = 0; index < this.totalDeCaixasParaAlocar; index++) {
         // }
@@ -23,9 +35,9 @@ export class Alocador {
         // TODO
         // use ultimaCaixaAlocada
 
-        gruposCaixas.forEach(grupo => {
-            ultimaCaixaAlocada = this.alocarGrupo(grupo, container, ultimaCaixaAlocada);
-        });
+        // gruposCaixas.forEach(grupo => {
+        //     ultimaCaixaAlocada = this.alocarGrupo(grupo, container, ultimaCaixaAlocada);
+        // });
 
         return container;
 
@@ -42,57 +54,59 @@ export class Alocador {
         return gruposCaixas.sort(compararBase);
     }
 
-    private alocarGrupo(grupoCaixas: GrupoCaixas, container: Container, ultimaCaixaAlocada: Caixa): Caixa {
-        let maximoIndiceX = this.calcularQuantidadeMaxima(grupoCaixas.caixas[0], 'x');
-        let maximoIndiceY = this.calcularQuantidadeMaxima(grupoCaixas.caixas[0], 'y');
-        let maximoIndiceZ = this.calcularQuantidadeMaxima(grupoCaixas.caixas[0], 'z');
+    // private alocarGrupo(grupoCaixas: GrupoCaixas, container: Container, ultimaCaixaAlocada: Caixa): Caixa {
+    //     let maximoIndiceX = this.calcularQuantidadeMaxima(grupoCaixas.caixas[0], 'x');
+    //     let maximoIndiceY = this.calcularQuantidadeMaxima(grupoCaixas.caixas[0], 'y');
+    //     let maximoIndiceZ = this.calcularQuantidadeMaxima(grupoCaixas.caixas[0], 'z');
 
-        let startFromX = ultimaCaixaAlocada?.posicao?.x ? ultimaCaixaAlocada?.posicao?.x : 0;
-        let startFromY = ultimaCaixaAlocada?.posicao?.y ? ultimaCaixaAlocada?.posicao?.y : 0;
-        let startFromZ = ultimaCaixaAlocada?.posicao?.z ? ultimaCaixaAlocada?.posicao?.z : 0;
+    //     let startFromX = ultimaCaixaAlocada?.posicao?.x ? ultimaCaixaAlocada?.posicao?.x : 0;
+    //     let startFromY = ultimaCaixaAlocada?.posicao?.y ? ultimaCaixaAlocada?.posicao?.y : 0;
+    //     let startFromZ = ultimaCaixaAlocada?.posicao?.z ? ultimaCaixaAlocada?.posicao?.z : 0;
 
-        // TODO
-        // use ultimaCaixaAlocada
+    //     // TODO
+    //     // use ultimaCaixaAlocada
 
-        let quantidadeCaixas = grupoCaixas.quantidadeCaixas()
+    //     let quantidadeCaixas = grupoCaixas.quantidadeCaixas()
 
-        for (let index = 0; index < quantidadeCaixas; index++) {
+    //     for (let index = 0; index < quantidadeCaixas; index++) {
 
-            for (let z = startFromZ; z < maximoIndiceZ && quantidadeCaixas > 0; z++) { 
-                for (let y = startFromY; y < maximoIndiceY && quantidadeCaixas > 0; y++) { 
-                    for (let x = startFromX; x < maximoIndiceX && quantidadeCaixas > 0; x++) { 
-                        ultimaCaixaAlocada = this.alocarCaixa(grupoCaixas.caixas[index], container, x, y, z);
-                        quantidadeCaixas -= 1;
-                        grupoCaixas.caixas.pop();
-                        console.log(`Caixa alocada.
-            id: ${grupoCaixas.caixas[index]?.id}
-            comprimentoX: ${grupoCaixas.caixas[index]?.comprimentoX}
-            alturaY: ${grupoCaixas.caixas[index]?.alturaY}
-            larguraZ: ${grupoCaixas.caixas[index]?.larguraZ}
-            volume: ${grupoCaixas.caixas[index]?.volume}
-                        `);
-                    }
-                }
-            }
+    //         for (let z = startFromZ; z < maximoIndiceZ && quantidadeCaixas > 0; z++) { 
+    //             for (let y = startFromY; y < maximoIndiceY && quantidadeCaixas > 0; y++) { 
+    //                 for (let x = startFromX; x < maximoIndiceX && quantidadeCaixas > 0; x++) { 
+    //                     console.log('Alocando caixa ', grupoCaixas.caixas[index]);
+    //                     console.log('Na posicão -> x: ', x, " | y: ", y, " | z: ", z);
+    //                     ultimaCaixaAlocada = this.alocarCaixa(grupoCaixas.caixas[index], container, x, y, z);
+    //                     quantidadeCaixas -= 1;
+    //                     grupoCaixas.caixas.pop();
+    //         //             console.log(`Caixa alocada.
+    //         // id: ${grupoCaixas.caixas[index]?.id}
+    //         // comprimentoX: ${grupoCaixas.caixas[index]?.comprimentoX}
+    //         // alturaY: ${grupoCaixas.caixas[index]?.alturaY}
+    //         // larguraZ: ${grupoCaixas.caixas[index]?.larguraZ}
+    //         // volume: ${grupoCaixas.caixas[index]?.volume}
+    //         //             `);
+    //                 }
+    //             }
+    //         }
 
-        }
+    //     }
         
-        return ultimaCaixaAlocada;
-    }
+    //     return ultimaCaixaAlocada;
+    // }
 
-    private alocarCaixa(caixa: Caixa, container: Container, x: number, y: number, z: number): Caixa {
-        container.quantidadeCaixasAlocadas += 1;
-        container.volumeAlocado += caixa.volume;
-        container.idsCaixasAlocadas.push(caixa.id);
-        caixa = container.alocar(caixa, x, y, z);
-        return caixa;
-    }
+    // private alocarCaixa(caixa: Caixa, container: Container, x: number, y: number, z: number): Caixa {
+    //     container.quantidadeCaixasAlocadas += 1;
+    //     container.volumeAlocado += caixa.volume;
+    //     container.idsCaixasAlocadas.push(caixa.id);
+    //     caixa = container.alocar(caixa, x, y, z);
+    //     return caixa;
+    // }
 
-    private calcularQuantidadeMaxima(caixa: Caixa, sentidoFileira: string = 'x'): number {
-        if (sentidoFileira == 'x') return Math.floor(this.container.comprimentoX/caixa.comprimentoX);
-        if (sentidoFileira == 'y') return Math.floor(this.container.alturaY/caixa.alturaY);
-        if (sentidoFileira == 'z') return Math.floor(this.container.larguraZ/caixa.larguraZ);
-    }
+    // private calcularQuantidadeMaxima(caixa: Caixa, sentidoFileira: string = 'x'): number {
+    //     if (sentidoFileira == 'x') return Math.floor(this.container.comprimentoX/caixa.comprimentoX);
+    //     if (sentidoFileira == 'y') return Math.floor(this.container.alturaY/caixa.alturaY);
+    //     if (sentidoFileira == 'z') return Math.floor(this.container.larguraZ/caixa.larguraZ);
+    // }
 
     private obterTotalDeCaixas(gruposCaixas: GrupoCaixas[]): number {
         let totalCaixas = 0;
