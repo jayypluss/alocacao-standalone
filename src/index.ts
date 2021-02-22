@@ -1,302 +1,240 @@
-// interface Objeto3D {
-//     larguraZ: number,
-//     comprimentoX: number,
-//     alturaY: number,
-//     quantidade: number
-// }
+import { Alocador } from "./alocador";
+import { GrupoCaixas } from "./models/GrupoCaixas";
+import { Matriz } from "./models/Matriz";
+import { Objeto3D } from "./models/Objeto3D";
+import { Container } from "./models/Container";
 
-class Objeto3D {
-    larguraZ: number;
-    comprimentoX: number;
-    alturaY: number;
-    quantidade: number;
-    constructor(larguraZ: number, comprimentoX: number, alturaY: number, quantidade: number) {
-        this.larguraZ = larguraZ;
-        this.comprimentoX = comprimentoX;
-        this.alturaY = alturaY;
-        this.quantidade = quantidade;
-    }
+function main() {
+
+    const container = new Container(
+        1, // id
+        200, // largura
+        400, // comprimento
+        150 // altura
+    );
+    
+    const caixas1 = new GrupoCaixas(1);
+    caixas1.criarCaixas(45, 25, 80, 15);
+    
+    const caixas2 = new GrupoCaixas(2);
+    caixas2.criarCaixas(70, 32, 60, 20);
+    
+    const caixas3 = new GrupoCaixas(3);
+    caixas3.criarCaixas(60, 41, 20, 15);
+    
+
+    const todasCaixas = [caixas1, caixas2, caixas3];
+
+    const alocador = new Alocador(container, todasCaixas);
+
+    alocador.alocarTodas(todasCaixas, container);
+
 }
 
-const MEDIDA_MINIMA_POR_CAIXA = 10;
-
-class Container extends Objeto3D {
-    quantidadeCaixasAlocadas: number = 0;
-    matrizPosicoes: any[][][] = [];
-    constructor(larguraZ: number, comprimentoX: number, alturaY: number, quantidade: number) {
-        super(larguraZ, comprimentoX, alturaY, quantidade);
-
-        for(var i: number = 0; i < MEDIDA_MINIMA_POR_CAIXA; i++) {
-            this.matrizPosicoes[i] = [];
-            for(var j: number = 0; j < MEDIDA_MINIMA_POR_CAIXA; j++) {
-                this.matrizPosicoes[i][j] = [];
-                for(var k: number = 0; k < MEDIDA_MINIMA_POR_CAIXA; k++) {
-                    this.matrizPosicoes[i][j][k] = 0;
-                }
-            }
-        }
-    }
-}
-
-class Caixas extends Objeto3D {
-    idTipoCaixa: number;
-    constructor(idTipoCaixa: number, larguraZ: number, comprimentoX: number, alturaY: number, quantidade: number) {
-        super(larguraZ, comprimentoX, alturaY, quantidade);
-        this.idTipoCaixa = idTipoCaixa;
-    }
-}
-
-const container = new Container(
-    200, // largura
-    400, // comprimento
-    150, // altura
-    1 // quantidade
-);
-
-const caixas1 = new Caixas(
-    1, //idTipoCaixa
-    80, // largura
-    45, // comprimento
-    25, // altura
-    15 // quantidade
-);
-
-const caixas2 = new Caixas(
-    2, //idTipoCaixa
-    60, // largura
-    70, // comprimento
-    32, // altura
-    20 // quantidade
-);
-
-const caixas3 = new Caixas(
-    3, // idTipoCaixa
-    20, // largura
-    60, // comprimento
-    41, // altura
-    15 // quantidade
-);
 
 
 // functions
 
-const testarMenorSobraComprimento = (container: Container, todasCaixas: Caixas[]): [number, number, number, number] => {
-    var indiceTipoCaixa: number;
-    var cabeMaiorQuantidade: number;
-    var sobraMenosEspaco: number;
-    var maiorQuantidade = 0;
-    var menorSobra = 9999999;
+// public alocarFileirasDeComprimentoParaCima(container: Container, todasCaixas: GrupoCaixas[], indiceLarguraX: number) {
+//     let alturaOcupada = 0;
+//     let indiceAlturaFileira = 0;
+//     var containerFileiraOcupada: Container = { ...container }; 
+//     for (alturaOcupada = 0; alturaOcupada < container.alturaY; indiceAlturaFileira++) {
+//         containerFileiraOcupada = preencherComprimentoX(container, todasCaixas, indiceAlturaFileira, indiceLarguraX);
+//         alturaOcupada += container.alturaY - containerFileiraOcupada.alturaY ;
+//         console.log('alturaOcupada: ', alturaOcupada);
+//         console.log('container.alturaY: ', container.alturaY);
+//     }
 
-    todasCaixas.forEach(tipoCaixa => {
-        var quantidade = Math.floor(container.comprimentoX/tipoCaixa.comprimentoX);
-        var sobra = container.comprimentoX % tipoCaixa.comprimentoX;
-        console.log('tipoCaixa.idTipoCaixa: ', tipoCaixa.idTipoCaixa, ' - quantidade: ', quantidade);
-        console.log('tipoCaixa.idTipoCaixa: ', tipoCaixa.idTipoCaixa, ' - sobra: ', sobra);
-        console.log('');
-        if (tipoCaixa.quantidade >= quantidade) {
-            if (quantidade > maiorQuantidade) {
-                maiorQuantidade = quantidade;
-                cabeMaiorQuantidade = tipoCaixa.idTipoCaixa;
-            }
-            if (sobra < menorSobra) {
-                sobraMenosEspaco = tipoCaixa.idTipoCaixa;
-                menorSobra = sobra;
-            }
-        }
-    });
-
-    // for (indiceTipoCaixa = 0; indiceTipoCaixa < todasCaixas.length; indiceTipoCaixa++) {
-    //     var quantidade = Math.floor(container.comprimentoX/todasCaixas[indiceTipoCaixa].comprimentoX);
-    //     var sobra = container.comprimentoX % todasCaixas[indiceTipoCaixa].comprimentoX;
-    //     console.log('indiceTipoCaixa: ', indiceTipoCaixa, ' - quantidade: ', quantidade);
-    //     console.log('indiceTipoCaixa: ', indiceTipoCaixa, ' - sobra: ', sobra);
-    //     console.log('');
-    //     if (todasCaixas[indiceTipoCaixa].quantidade >= quantidade) {
-    //         if (quantidade > maiorQuantidade) {
-    //             maiorQuantidade = quantidade;
-    //             cabeMaiorQuantidade = indiceTipoCaixa;
-    //         }
-    //         if (sobra < menorSobra) {
-    //             sobraMenosEspaco = indiceTipoCaixa;
-    //             menorSobra = sobra;
-    //         }
-    //     }
-    // }
-    // console.log('cabeMaiorQuantidade: ', cabeMaiorQuantidade);
-    // console.log('sobraMenosEspaco: ', sobraMenosEspaco);
-    // console.log('maiorQuantidade: ', maiorQuantidade);
-    // console.log('menorSobra: ', menorSobra);
-
-    return [cabeMaiorQuantidade, sobraMenosEspaco, maiorQuantidade, menorSobra];
-};
+//     return containerFileiraOcupada;
+// };
 
 
+// const cabeOutroTipoDeCaixa = (containerComFileiraOcupada: Container, todasCaixas: GrupoCaixas[]): [GrupoCaixas, number] => {
+//     var tipoCaixa: GrupoCaixas;
+//     var quantidade: number = 0;
+//     todasCaixas.forEach(caixa => {
+//         if (containerComFileiraOcupada.comprimentoX >= caixa.comprimentoX) {
+//             tipoCaixa = caixa;
+//             quantidade = Math.floor(container.comprimentoX/tipoCaixa.comprimentoX);
+//         }
+//     });
+//     return [tipoCaixa, quantidade];
+// };
 
-const preencherComprimentoX = (container: Container, caixas: Caixas, posicaoZ: number, posicaoY: number): Container => {
-    var comprimentoTotalUtil = container.comprimentoX;
-    var containerOcupado: Container = { ...container } as Container;
-    var primeiraDeducao = true;
 
-    console.log('--------- INICIANDO ALOCAÇÃO ---------');
-    console.log('posicaoZ: ', posicaoZ, ' - posicaoY: ', posicaoY);
-    console.log('--------------------------------------');
+// const preencherComprimentoX = (container: Container, todasCaixas: GrupoCaixas[], posicaoZ: number, posicaoY: number): Container => {
+//     var comprimentoTotalUtil = container.comprimentoX;
+//     var fileiraContainerOcupada: Container = { ...container } as Container;
+//     var fileira: any = {};
+//     var caixasAlocadasFileira: number[] = [];
+//     var primeiraDeducao = true;
+//     let tipoCaixa: GrupoCaixas;
+//     todasCaixas.forEach(caixas => {
+//         let cabeDessaCaixaNaAltura = fileiraContainerOcupada.alturaY-caixas.alturaY >= 0;
+//         let aindaTemDessaCaixa = caixas.quantidade > 0;
+//         if (aindaTemDessaCaixa && cabeDessaCaixaNaAltura) {
+//             tipoCaixa = caixas;
+//         }
+//     });
 
-    for (var ocupado = 0; (ocupado <= comprimentoTotalUtil) && (caixas.quantidade > 0); ) {
-        console.log();
-        console.log('------------------------------------------------');
-        console.log();
-        console.log("containerOcupado.comprimentoX: ", containerOcupado.comprimentoX);
-        console.log("containerOcupado.alturaY: ", containerOcupado.alturaY);
-        console.log("containerOcupado.larguraZ: ", containerOcupado.larguraZ);
-        console.log("containerOcupado.quantidadeCaixasAlocadas: ", containerOcupado.quantidadeCaixasAlocadas);
-        console.log();
-        console.log('--------> quantidadeCaixasAlocadas: %s <-------', containerOcupado.quantidadeCaixasAlocadas);
-        console.log('--------> Caixas.quantidade: %s <-------', caixas.quantidade);
-        console.log();
-        var espacoSobrando = comprimentoTotalUtil - ocupado;
-        if ((espacoSobrando > 0) 
-            && !(espacoSobrando <= caixas.comprimentoX)) {
-
-            containerOcupado.comprimentoX -= caixas.comprimentoX;
-            if (primeiraDeducao) {
-                if (containerOcupado.alturaY - caixas.alturaY >= 0 
-                    && containerOcupado.larguraZ - caixas.larguraZ >= 0) {
-                        
-                        containerOcupado.alturaY -= caixas.alturaY;
-                        containerOcupado.larguraZ -= caixas.larguraZ;
-                        primeiraDeducao = false;
-                } else {
-                    break;
-                }
-            }
-            espacoSobrando -= caixas.comprimentoX;
-            ocupado += caixas.comprimentoX
-            caixas.quantidade -= 1;
-            containerOcupado.quantidadeCaixasAlocadas += 1;
-            containerOcupado.matrizPosicoes[containerOcupado.quantidadeCaixasAlocadas][posicaoY][posicaoZ] = caixas.idTipoCaixa;
-        } else {
-            break;
-        }
-    }
+//     if (tipoCaixa) {
+//         for (var comprimentoOcupado = 0; (comprimentoOcupado <= comprimentoTotalUtil) 
+//             && (tipoCaixa.quantidade > 0 
+//             && (tipoCaixa.alturaY-container.alturaY >= 0)); ) {
+//             var espacoSobrando = comprimentoTotalUtil - comprimentoOcupado;
+//             if ((espacoSobrando > 0) 
+//                 && !(espacoSobrando <= tipoCaixa.comprimentoX)) {
     
-    return containerOcupado;
-};
+//                 fileiraContainerOcupada.comprimentoX -= tipoCaixa.comprimentoX;
+//                 if (primeiraDeducao) {
+//                     if (fileiraContainerOcupada.alturaY - tipoCaixa.alturaY >= 0 
+//                         && fileiraContainerOcupada.larguraZ - tipoCaixa.larguraZ >= 0) {
+                            
+//                             fileiraContainerOcupada.alturaY -= tipoCaixa.alturaY;
+//                             fileiraContainerOcupada.larguraZ -= tipoCaixa.larguraZ;
+//                             primeiraDeducao = false;
+//                     } else {
+//                         break;
+//                     }
+//                 }
+//                 espacoSobrando -= tipoCaixa.comprimentoX;
+//                 comprimentoOcupado += tipoCaixa.comprimentoX
+//                 tipoCaixa.quantidade -= 1;
+//                 fileiraContainerOcupada.matrizPosicoes[fileiraContainerOcupada.quantidadeCaixasAlocadas][posicaoY][posicaoZ] = tipoCaixa.idTipoCaixa;
+//                 fileiraContainerOcupada.idsCaixasAlocadas.push(tipoCaixa.idTipoCaixa);
+//                 caixasAlocadasFileira.push(tipoCaixa.idTipoCaixa);
+//                 fileiraContainerOcupada.volumeAlocado += volumeCaixa(tipoCaixa, 1);
+//                 fileiraContainerOcupada.quantidadeCaixasAlocadas += 1;
+//             } else {
+//                 var cabeMais = cabeOutroTipoDeCaixa(fileiraContainerOcupada, todasCaixas);
+//                 var tipoCaixaQueCabeMais = cabeMais[0];
+//                 var quantidadeQueCabeMais = cabeMais[1];
+//                 for (let index = 0; index < quantidadeQueCabeMais; index++) {
+//                     espacoSobrando -= tipoCaixaQueCabeMais.comprimentoX;
+//                     comprimentoOcupado += tipoCaixaQueCabeMais.comprimentoX;
+//                     tipoCaixaQueCabeMais.quantidade -= 1;
+//                     fileiraContainerOcupada.matrizPosicoes[fileiraContainerOcupada.quantidadeCaixasAlocadas][posicaoY][posicaoZ] = tipoCaixaQueCabeMais.idTipoCaixa;
+//                     fileiraContainerOcupada.idsCaixasAlocadas.push(tipoCaixaQueCabeMais.idTipoCaixa);
+//                     caixasAlocadasFileira.push(tipoCaixaQueCabeMais.idTipoCaixa);
+//                     fileiraContainerOcupada.volumeAlocado += volumeCaixa(tipoCaixaQueCabeMais, 1);
+//                     fileiraContainerOcupada.quantidadeCaixasAlocadas += 1;
+//                 }
+//                 break;
+//             }
+//         }
+//     }
+
+//     fileira = {
+//         comprimentoOcupado: fileiraContainerOcupada.comprimentoX,
+//         alturaOcupada: fileiraContainerOcupada.alturaY,
+//         larguraOcupada: fileiraContainerOcupada.larguraZ,
+//         indiceOcupado: fileiraContainerOcupada.quantidadeCaixasAlocadas,
+//         caixasAlocadasFileira: caixasAlocadasFileira
+//     };
+
+//     return fileiraContainerOcupada;
+// };
 
 
-const empilharNoComprimento = (container: Container, caixas: Caixas, posicao: number) => {
-    return;
-}
+// const empilharFileiraComprimentoX = (container: Container, caixas: GrupoCaixas, posicao: number) => {
+//     return;
+// }
 
 
-const volumeCaixas = (caixas: Caixas[]) => {
-    let volumeTotal: number = 0;
-    caixas.forEach(element => {
-        volumeTotal += element.alturaY * element.alturaY * element.larguraZ * element.quantidade;
-    });
-    return volumeTotal;
-};
+// const volumeCaixas = (caixas: GrupoCaixas[]): number => {
+//     let volumeTotal: number = 0;
+//     caixas.forEach(element => {
+//         volumeTotal += element.alturaY * element.alturaY * element.larguraZ * element.quantidade;
+//     });
+//     return volumeTotal;
+// };
+
+// const volumeCaixa = (caixas: GrupoCaixas, quantidade?: number): number => {
+//     let volume = caixas.alturaY * caixas.alturaY * caixas.larguraZ * (quantidade ? quantidade : caixas.quantidade);
+//     return volume;
+// };
+
+// const volumeContainer = (container: Container): number => {
+//     return container.comprimentoX *  container.alturaY * container.larguraZ;
+// };
 
 
-const centimetrosParaMetros = (volumeEmCentimetros: number) => {
-    return (volumeEmCentimetros/100).toFixed(2);
-};
+// const cabeAlgumaCaixaNoComprimentoX = (container: Container, todasCaixas: GrupoCaixas[], posicao: number) => {
+//     for (let index = 0; index < todasCaixas.length; index++) {
+//         if (todasCaixas[index].quantidade > 0) {
+//             if (todasCaixas[index].comprimentoX <= container.comprimentoX) {
+//                 return todasCaixas[index];
+//             }
+//         }         
+//     }
+// };
+
+// const cabeAlgumaCaixaNaLarguraZ = (container: Container, todasCaixas: GrupoCaixas[]) => {
+//     for (let index = 0; index < todasCaixas.length; index++) {
+//         if (todasCaixas[index].larguraZ > 0) {
+//             if (todasCaixas[index].larguraZ <= container.larguraZ) {
+//                 return index;
+//             }
+//         }         
+//     }
+// };
 
 
-const cabeAlgumaCaixaNoComprimentoX = (container: Container, todasCaixas: Caixas[], posicao: number) => {
-    for (let index = 0; index < todasCaixas.length; index++) {
-        if (todasCaixas[index].quantidade > 0) {
-            if (todasCaixas[index].comprimentoX <= container.comprimentoX) {
-                return index;
-            }
-        }         
-    }
-};
-
-const cabeAlgumaCaixaNaLarguraZ = (container: Container, todasCaixas: Caixas[]) => {
-    for (let index = 0; index < todasCaixas.length; index++) {
-        if (todasCaixas[index].larguraZ > 0) {
-            if (todasCaixas[index].larguraZ <= container.larguraZ) {
-                return index;
-            }
-        }         
-    }
-};
+// // const cabeAlgumaCaixaNaAlturaY = (container: Container, todasCaixas: GrupoCaixas[]) => {
+// //     for (let index = 0; index < todasCaixas.length; index++) {
+// //         if (todasCaixas[index].alturaY > 0) {
+// //             if (todasCaixas[index].alturaY <= container.alturaY) {
+// //                 return index;
+// //             }
+// //         }         
+// //     }
+// // };
 
 
-const cabeAlgumaCaixaNaAlturaY = (container: Container, todasCaixas: Caixas[]) => {
-    for (let index = 0; index < todasCaixas.length; index++) {
-        if (todasCaixas[index].alturaY > 0) {
-            if (todasCaixas[index].alturaY <= container.alturaY) {
-                return index;
-            }
-        }         
-    }
-};
+// const cabeQuantasCaixasNoComprimento = (container: Container, todasCaixas: GrupoCaixas[]) => {
+//     for (let index = 0; index < todasCaixas.length; index++) {
+//         if (todasCaixas[index].quantidade > 0) {
+//             if (todasCaixas[index].comprimentoX <= container.comprimentoX) {
+//                 return index;
+//             }
+//         }         
+//     }
+// };
+
+// const acharTipoCaixaPorId = (todasCaixas: GrupoCaixas[], id: number): GrupoCaixas => {
+//     let caixas;
+//     todasCaixas.forEach(tipoCaixa => {
+//         if (tipoCaixa.idTipoCaixa == id) {
+//             caixas = tipoCaixa;
+//         }
+//     });
+//     console.log(caixas);
+//     return caixas;
+// };
 
 
-const cabeQuantasCaixasNoComprimento = (container: Container, todasCaixas: Caixas[]) => {
-    for (let index = 0; index < todasCaixas.length; index++) {
-        if (todasCaixas[index].quantidade > 0) {
-            if (todasCaixas[index].comprimentoX <= container.comprimentoX) {
-                return index;
-            }
-        }         
-    }
-};
+
+// const cabeAlgumaCaixaNaAlturaY = (containerFileiraOcupada: Container, todasCaixas: GrupoCaixas[]): any => {
+//     let cabe = false;
+//     // let caixa: GrupoCaixas = null;
+//     todasCaixas.forEach(tipoCaixa => {
+//         if (tipoCaixa.quantidade > 0 && tipoCaixa.alturaY <= containerFileiraOcupada.alturaY) {
+//             cabe = true;
+//             // caixa = tipoCaixa;
+//         };
+//     });
+//     return cabe;
+// };
+
+// // routines
+
+// // console.log("Dados iniciais do Container: ", container);
+// console.log();
 
 
-// routines
+// var todasCaixas: GrupoCaixas[] = [caixas1, caixas2, caixas3];
+// var volumeTotalCaixas = volumeCaixas(todasCaixas);
 
-console.log("Dados iniciais do Container: ", container);
-console.log();
+// var containerParedeAlocada = Alocador.alocarFileirasDeComprimentoParaCima(container, todasCaixas, 0);
 
-
-var todasCaixas: Caixas[] = [caixas1, caixas2, caixas3];
-
-
-const encaixe = testarMenorSobraComprimento(container, todasCaixas);
-var cabeMaiorQuantidade = encaixe[0];
-var sobraMenosEspaco = encaixe[1];
-var maiorQuantidade = encaixe[2];
-var menorSobra = encaixe[3];
-
-
-console.log('Índice caixas - após alocar cabe maior quantidade no (comprimento) ', cabeMaiorQuantidade);
-console.log('Maior quantidade que cabe do tipo de caixa (comprimento): ', maiorQuantidade);
-console.log('');
-
-console.log('Índice caixas - após alocar sobra menos espaço no (comprimento): ', sobraMenosEspaco);
-console.log('Menor sobra do tipo de caixa (comprimento): ', menorSobra);
-console.log('');
-
-
-var volumeTotalCaixas = volumeCaixas(todasCaixas);
-console.log('Volume total das Caixas: ', volumeTotalCaixas, 'cm');
-console.log('Volume total das Caixas: ', centimetrosParaMetros(volumeTotalCaixas), 'm');
-console.log();
-
-var containerOcupado = preencherComprimentoX(container, todasCaixas[sobraMenosEspaco], 0, 0);
-console.log();
-console.log("containerOcupado pós interações: ");
-console.log("containerOcupado.comprimentoX: ", containerOcupado.comprimentoX);
-console.log("containerOcupado.alturaY: ", containerOcupado.alturaY);
-console.log("containerOcupado.larguraZ: ", containerOcupado.larguraZ);
-console.log("containerOcupado.quantidadeCaixasAlocadas: ", containerOcupado.quantidadeCaixasAlocadas);
-console.log("caixas1.quantidade: ", caixas1.quantidade);
-console.log();
-
-var tipoDeCaixaQueCabeNoComprimento = cabeAlgumaCaixaNoComprimentoX(containerOcupado, todasCaixas, 0);
-console.log("Índice do tipo de caixa que cabe mais no comprimento do container: ", tipoDeCaixaQueCabeNoComprimento);
-console.log('');
-
-var sobrandoComprimentoX = container.comprimentoX - containerOcupado.comprimentoX;
-console.log("Comprimento (X) sobrando no Container: ", sobrandoComprimentoX);
-
-
-var sobrandoLarguraZ = container.larguraZ - containerOcupado.larguraZ;
-console.log("Largura (Z) sobrando no Container: ", sobrandoLarguraZ);
-
-
-var sobrandoAlturaY = container.alturaY - containerOcupado.alturaY;
-console.log("Altura (Y) sobrando no Container: ", sobrandoAlturaY);
-console.log();
