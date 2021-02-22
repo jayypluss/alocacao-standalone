@@ -15,16 +15,16 @@ export class Alocador {
     public alocarTodas(gruposCaixas: GrupoCaixas[], container: Container) {
         this.gruposCaixas = this.organizarPorMaiorBase(gruposCaixas);
         this.totalDeCaixasParaAlocar = this.obterTotalDeCaixas(gruposCaixas);
-        let ultimaCaixaAlocada = null;
+        let ultimaCaixaAlocada: Caixa = null;
 
         // for (let index = 0; index < this.totalDeCaixasParaAlocar; index++) {
         // }
 
         // TODO
         // use ultimaCaixaAlocada
-        
+
         gruposCaixas.forEach(grupo => {
-            ultimaCaixaAlocada = this.alocarGrupo(grupo, container);
+            ultimaCaixaAlocada = this.alocarGrupo(grupo, container, ultimaCaixaAlocada);
         });
 
         return container;
@@ -42,27 +42,34 @@ export class Alocador {
         return gruposCaixas.sort(compararBase);
     }
 
-    private alocarGrupo(grupoCaixas: GrupoCaixas, container: Container): Caixa {
+    private alocarGrupo(grupoCaixas: GrupoCaixas, container: Container, ultimaCaixaAlocada: Caixa): Caixa {
         let maximoIndiceX = this.calcularQuantidadeMaxima(grupoCaixas.caixas[0], 'x');
         let maximoIndiceY = this.calcularQuantidadeMaxima(grupoCaixas.caixas[0], 'y');
         let maximoIndiceZ = this.calcularQuantidadeMaxima(grupoCaixas.caixas[0], 'z');
-        let ultimaCaixaAlocada = null;
+
+        let startFromX = ultimaCaixaAlocada?.posicao?.x ? ultimaCaixaAlocada?.posicao?.x : 0;
+        let startFromY = ultimaCaixaAlocada?.posicao?.y ? ultimaCaixaAlocada?.posicao?.y : 0;
+        let startFromZ = ultimaCaixaAlocada?.posicao?.z ? ultimaCaixaAlocada?.posicao?.z : 0;
 
         // TODO
         // use ultimaCaixaAlocada
 
-        for (let index = 0; index < grupoCaixas.quantidadeCaixas(); index++) {
+        let quantidadeCaixas = grupoCaixas.quantidadeCaixas()
 
-            for (let z = 0; z < maximoIndiceZ; z++) { 
-                for (let y = 0; y < maximoIndiceY; y++) { 
-                    for (let x = 0; x < maximoIndiceX; x++) { 
+        for (let index = 0; index < quantidadeCaixas; index++) {
+
+            for (let z = startFromZ; z < maximoIndiceZ && quantidadeCaixas > 0; z++) { 
+                for (let y = startFromY; y < maximoIndiceY && quantidadeCaixas > 0; y++) { 
+                    for (let x = startFromX; x < maximoIndiceX && quantidadeCaixas > 0; x++) { 
                         ultimaCaixaAlocada = this.alocarCaixa(grupoCaixas.caixas[index], container, x, y, z);
+                        quantidadeCaixas -= 1;
+                        grupoCaixas.caixas.pop();
                         console.log(`Caixa alocada.
-                        id: ${ultimaCaixaAlocada.id}
-                        comprimentoX: ${ultimaCaixaAlocada.comprimentoX}
-                        alturaY: ${ultimaCaixaAlocada.alturaY}
-                        larguraZ: ${ultimaCaixaAlocada.larguraZ}
-                        volume: ${ultimaCaixaAlocada.volume}
+            id: ${grupoCaixas.caixas[index]?.id}
+            comprimentoX: ${grupoCaixas.caixas[index]?.comprimentoX}
+            alturaY: ${grupoCaixas.caixas[index]?.alturaY}
+            larguraZ: ${grupoCaixas.caixas[index]?.larguraZ}
+            volume: ${grupoCaixas.caixas[index]?.volume}
                         `);
                     }
                 }

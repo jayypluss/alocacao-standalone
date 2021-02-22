@@ -32,6 +32,8 @@ function main() {
 }
 
 
+main();
+
 
 // functions
 
