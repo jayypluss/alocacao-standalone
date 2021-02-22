@@ -1,7 +1,6 @@
 import { Container } from './Container';
 import { Caixa } from "./Caixa";
 import { Objeto3D } from "./Objeto3D";
-import { ItemMatriz } from './Matriz';
 
 export class FileiraCaixas extends Objeto3D {
     id: number;
@@ -51,7 +50,7 @@ export class FileiraCaixas extends Objeto3D {
 
     adicionarCaixa(caixa: Caixa, container: Container, fileiraIndex: number, paredeIndex: number): Caixa {
         if (this.cabeCaixa(caixa)) {
-            caixa.atribuirPosicao(this.caixas.length-1, fileiraIndex, paredeIndex);
+            caixa.atribuirPosicao(this.caixas.length, fileiraIndex, paredeIndex);
             caixa.container = container;
             this.caixas.push(caixa);
             this.calcularTamanho();

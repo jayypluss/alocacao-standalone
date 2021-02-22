@@ -19,6 +19,7 @@ export class ParedeCaixas extends Objeto3D {
 
         super(id, comprimentoX, alturaY, larguraZ);
         this.id = id;
+        this.container = container;
         this.posicaoZ = posicaoZ;
         this.fileiras = fileiras;
         this.calcularTamanho();
@@ -41,6 +42,11 @@ export class ParedeCaixas extends Objeto3D {
         if (this.fileiras.length < 1) {
             if(this.cabeFileiraComCaixa(caixa)) {
                 this.fileiras.push(new FileiraCaixas(0, this.container, 0, paredeIndex));
+                let ultimaFileira = this.fileiras[this.fileiras.length-1];
+                let caixaAlocadaResult = ultimaFileira.adicionarCaixa(caixa, container, this.fileiras.length-1, paredeIndex);
+                if (caixaAlocadaResult.isAlocada()) {
+                    caixa = caixaAlocadaResult;
+                }
             }
         } else {
             let ultimaFileira = this.fileiras[this.fileiras.length-1];

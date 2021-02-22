@@ -1,5 +1,5 @@
 import { Objeto3D } from "./Objeto3D";
-import { ItemMatriz } from "./Matriz";
+import { ItemMatriz } from "./ItemMatriz";
 import { Container } from "./Container";
 
 export class Caixa extends Objeto3D {
@@ -18,6 +18,9 @@ export class Caixa extends Objeto3D {
     }
 
     isAlocada() {
-        return this.posicao?.x && this.posicao?.y && this.posicao?.z;
+        if (this.posicao?.x >= 0) return true;
+        if (this.posicao?.y >= 0) return true;
+        if (this.posicao?.z >= 0) return true;
+        else return false;
     }
 }

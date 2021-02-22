@@ -1,13 +1,9 @@
-import { FileiraCaixas } from './FileiraCaixas';
 import { Objeto3D } from './Objeto3D';
-import { Matriz } from './Matriz';
 import { Caixa } from './Caixa';
-import { ItemMatriz } from './Matriz';
 import { ParedeCaixas } from './ParedeCaixas';
 
 export class Container extends Objeto3D {
     id: number;
-    matriz: Matriz;
     quantidadeCaixasAlocadas: number = 0;
     volumeAlocado: number = 0;
     caixasAlocadas: Caixa[] = [];
@@ -21,6 +17,7 @@ export class Container extends Objeto3D {
 
     alocar(caixa: Caixa): Caixa {
         let caixaAlocada: Caixa;
+
         if (this.paredes.length < 1) {
             this.paredes.push(new ParedeCaixas(0, this, 0));
         } 
@@ -37,15 +34,13 @@ export class Container extends Objeto3D {
         }
         
         if (caixaAlocada.isAlocada()) {
-            this.quantidadeCaixasAlocadas =+ 1;
-            this.volumeAlocado =+ caixa.volume;
+            this.quantidadeCaixasAlocadas += 1;
+            this.volumeAlocado += caixa.volume;
             this.caixasAlocadas.push(caixa);
             this.idsCaixasAlocadas.push(caixa.id);
             this.ultimaCaixaAlocada = caixa;
         }
 
-        // TODO
-        // this.matriz.adicionar(caixa, x, y, z);
         return caixaAlocada;
     }
 }
